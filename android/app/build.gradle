@@ -26,7 +26,7 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdkVersion 33
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -69,6 +69,6 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5' // local notification
+    implementation 'androidx.work:work-runtime-ktx:2.8.0-beta02'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.0' // local notification
 }

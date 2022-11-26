@@ -26,23 +26,20 @@ class NotifyHelper {
     );
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
-      onSelectNotification: (String? payload) async {
-        if (payload != null) {
-          debugPrint('notification payload: ' + payload);
-        }
-      },
     );
   }
 
   displayNotification({required String title, required String body}) async {
     print('doing test');
     var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
-        'your channel id', 'your channel name', 'your channel description',
-        importance: Importance.max, priority: Priority.high);
-    var iOSPlatformChannelSpecifics = const IOSNotificationDetails();
+        'your channel id', 'your channel name',
+        channelDescription: 'your channel description',
+        importance: Importance.max,
+        priority: Priority.high);
+
     var platformChannelSpecifics = NotificationDetails(
-        android: androidPlatformChannelSpecifics,
-        iOS: iOSPlatformChannelSpecifics);
+      android: androidPlatformChannelSpecifics,
+    );
     await flutterLocalNotificationsPlugin.show(
       0,
       title,
@@ -60,8 +57,9 @@ class NotifyHelper {
       // tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
       _nextInstanceOfTenAM(hour, minutes, reminder.date!),
       NotificationDetails(
-        android: AndroidNotificationDetails(reminder.id.toString(),
-            reminder.name ?? "Reminder", reminder.description ?? "Description"),
+        android: AndroidNotificationDetails(
+            reminder.id.toString(), reminder.name ?? "Reminder",
+            channelDescription: reminder.description ?? "Description"),
       ),
       androidAllowWhileIdle: true,
       uiLocalNotificationDateInterpretation:
