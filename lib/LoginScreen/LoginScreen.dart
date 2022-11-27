@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:textrade/Common/HexColorHelper.dart';
-import 'package:textrade/Common/Routes.dart';
-import 'package:textrade/Common/Utilies.dart';
 import 'package:textrade/LoginScreen/LoginScreenController.dart';
 
 import '../Common/Constants.dart';

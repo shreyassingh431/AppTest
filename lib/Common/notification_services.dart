@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
 import 'package:textrade/model/Reminder.dart';
@@ -11,7 +10,7 @@ class NotifyHelper {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  String selectedNotificationPayload = '';
+
 
   initializeNotification() async {
     tz.initializeTimeZones();

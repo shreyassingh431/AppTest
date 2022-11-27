@@ -1,13 +1,9 @@
-import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gallery_saver/gallery_saver.dart';
-
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-
 import 'package:intl/intl.dart';
 import 'package:textrade/Common/HexColorHelper.dart';
 import 'package:textrade/Common/Utilies.dart';
@@ -15,8 +11,12 @@ import 'package:textrade/HomeScreen/HomeScreenController.dart';
 import 'package:textrade/db/db_helper.dart';
 import 'package:textrade/model/Reminder.dart';
 
-class CreateMeetingView {
-  static var shared = CreateMeetingView();
+class CreateReminderDialog extends StatelessWidget {
+  var homeScreenController = Get.find<HomeScreenController>();
+  CreateReminderDialog({
+    Key? key,
+  }) : super(key: key);
+
   final _nameController = TextEditingController();
   final _descController = TextEditingController();
   final _dateController = TextEditingController();
@@ -28,72 +28,77 @@ class CreateMeetingView {
       twentyFourhrformattedTime = "";
   File? pickedImageFile;
 
-  Widget createMeeting(HomeScreenController homeScreenController) {
+  @override
+  Widget build(BuildContext context) {
     var color = HexColor("#EFF2F7");
     String title = "New Reminder";
     IconData closeICon = Icons.cancel;
     Size size = MediaQuery.of(Get.context!).size;
-    return SingleChildScrollView(
+    return AlertDialog(
+      content: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(
-                  title,
-                  textAlign: TextAlign.right,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      title,
+                      textAlign: TextAlign.right,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(
+                      width: size.width * 0.15,
+                    ),
+                    InkWell(
+                      onTap: () => {_close, _clear},
+                      child: Icon(
+                        closeICon,
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(
-                  width: size.width * 0.25,
+              ),
+              Divider(
+                height: 7,
+                thickness: 7,
+                color: HexColor("#C0CCDA"),
+              ),
+              reminderNameField(),
+              reminderDescriptionField(),
+              reminderDateTimeField(),
+              const SizedBox(
+                height: 5,
+              ),
+              selectImage(size),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    saveBtn(homeScreenController),
+                    resetBtn(),
+                  ],
                 ),
-                InkWell(
-                  onTap: () => {_close, _clear},
-                  child: Icon(
-                    closeICon,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Divider(
-            height: 7,
-            thickness: 7,
-            color: HexColor("#C0CCDA"),
-          ),
-          reminderNameField(),
-          reminderDescriptionField(),
-          reminderDateTimeField(),
-          const SizedBox(
-            height: 5,
-          ),
-          selectImage(size),
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                saveBtn(homeScreenController),
-                resetBtn(),
-              ],
-            ),
-          ),
-        ]));
+              ),
+            ]),
+      ),
+    );
   }
 
   Widget selectImage(Size size) {
     return GestureDetector(
       onTap: () => takeImageFromCamera(),
       child: Container(
-          margin: const EdgeInsets.all(10),
-          padding: const EdgeInsets.all(10),
+          margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           decoration: BoxDecoration(
               border: Border.all(
             color: HexColor("#FF0000"),
@@ -102,7 +107,7 @@ class CreateMeetingView {
             "Select Image",
             style: TextStyle(
                 color: HexColor("#CA0017"),
-                fontSize: 24,
+                fontSize: 16,
                 fontWeight: FontWeight.bold),
           )),
     );
@@ -281,14 +286,14 @@ class CreateMeetingView {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: HexColor("#FF1111"),
-        minimumSize: const Size(150, 40),
+        minimumSize: const Size(75, 32),
       ),
       onPressed: () {
         _saveReminder(homeScreenController);
       },
       child: const Text(
         'SAVE',
-        style: TextStyle(color: Colors.white, fontSize: 22),
+        style: TextStyle(color: Colors.white, fontSize: 18),
       ),
     );
   }
@@ -338,14 +343,14 @@ class CreateMeetingView {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: HexColor("#FF1111"),
-        minimumSize: const Size(150, 40),
+        minimumSize: const Size(75, 32),
       ),
       onPressed: () {
         _clear;
       },
       child: const Text(
         'RESET',
-        style: TextStyle(color: Colors.white, fontSize: 22),
+        style: TextStyle(color: Colors.white, fontSize: 18),
       ),
     );
   }
@@ -357,7 +362,7 @@ class CreateMeetingView {
   get _clear {
     _nameController.clear();
     _descController.clear();
-    _dateTimeController.clear();
+    _dateController.clear();
     _timeController.clear();
     _dateTimeController.clear();
     pickedImageFile = null;
