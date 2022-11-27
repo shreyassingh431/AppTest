@@ -21,11 +21,13 @@ class CreateReminderDialog extends StatelessWidget {
   final _descController = TextEditingController();
   final _dateController = TextEditingController();
   final _timeController = TextEditingController();
-  final _dateTimeController = TextEditingController();
+  final _dateTimeController =
+      TextEditingController(text: "Please Select Date and Time");
   String formattedMonth = "",
       formattedDate = "",
       formattedYear = "",
       twentyFourhrformattedTime = "";
+  TimeOfDay? pickedTime = TimeOfDay.now();
   File? pickedImageFile;
 
   @override
@@ -38,7 +40,7 @@ class CreateReminderDialog extends StatelessWidget {
       content: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Padding(
@@ -58,7 +60,7 @@ class CreateReminderDialog extends StatelessWidget {
                       width: size.width * 0.15,
                     ),
                     InkWell(
-                      onTap: () => {_close, _clear},
+                      onTap: () => {_close(), _clear},
                       child: Icon(
                         closeICon,
                       ),
@@ -73,7 +75,7 @@ class CreateReminderDialog extends StatelessWidget {
               ),
               reminderNameField(),
               reminderDescriptionField(),
-              reminderDateTimeField(),
+              reminderDateTimeField(size),
               const SizedBox(
                 height: 5,
               ),
@@ -163,36 +165,28 @@ class CreateReminderDialog extends StatelessWidget {
     );
   }
 
-  Widget reminderDateTimeField() {
+  Widget reminderDateTimeField(Size size) {
     return GestureDetector(
       onTap: () => _chooseDate,
       child: Container(
-        margin: const EdgeInsets.only(left: 10, right: 10),
-        padding: const EdgeInsets.only(left: 10, right: 10),
-        child: TextFormField(
-            enabled: false,
-            controller: _dateTimeController,
-            style: const TextStyle(color: Colors.black),
-            maxLines: 1,
-            decoration: const InputDecoration(
-              hintText: 'Please Select Date and Time',
-              labelStyle: TextStyle(color: Colors.black),
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-              border: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-            )),
+        width: size.width * 0.55,
+        margin: const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        decoration: const BoxDecoration(
+          border: Border(
+            bottom: BorderSide(width: 1.0),
+          ),
+        ),
+        child: Text(
+          _dateTimeController.text,
+          maxLines: 1,
+          textAlign: TextAlign.left,
+        ),
       ),
     );
   }
 
   void _selectTime() async {
-    TimeOfDay? pickedTime = TimeOfDay.now();
     pickedTime = await showTimePicker(
       initialTime: TimeOfDay.now(),
       context: Get.context!,
@@ -229,6 +223,7 @@ class CreateReminderDialog extends StatelessWidget {
       //DateFormat() is from intl package, you can format the time on any pattern you need.
       _dateTimeController.text =
           "${_dateController.text} ${_timeController.text}";
+      Get.forceAppUpdate();
     }
   }
 
@@ -323,7 +318,7 @@ class CreateReminderDialog extends StatelessWidget {
 
       return;
     }
-
+    _close();
     var reminder = Reminder(
         id: 00,
         name: _nameController.text,
@@ -331,12 +326,10 @@ class CreateReminderDialog extends StatelessWidget {
         date: _dateController.text,
         time: _timeController.text,
         imgPath: pickedImageFile?.path);
-
     DBHelper().insertTask(reminder);
     homeScreenController.getTask();
-    _handlingReminder(homeScreenController, _timeController.text, reminder);
-    _close;
     _openDialog;
+    _handlingReminder(homeScreenController, _timeController.text, reminder);
   }
 
   Widget resetBtn() {
@@ -355,7 +348,7 @@ class CreateReminderDialog extends StatelessWidget {
     );
   }
 
-  get _close {
+  void _close() {
     Get.back();
   }
 
